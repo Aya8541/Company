@@ -1,3 +1,8 @@
+using Company.G02.BLL.Interfaces;
+using Company.G02.BLL.Repositories;
+using Company.G02.DAL.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
+
 namespace Company.G02.PL
 {
     public class Program
@@ -9,6 +14,11 @@ namespace Company.G02.PL
             // Add services to the container.
             builder.Services.AddControllersWithViews();//Register Build-In Mvc Servises
 
+            builder.Services.AddScoped<IDepartmentRepository , DepartmentRepository>(); //Register DI (Dependency Injection) for DepartmentRepository
+            builder.Services.AddDbContext<CompanyDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            }); //Register DI (Dependency Injection) for CompanyDbContext
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
