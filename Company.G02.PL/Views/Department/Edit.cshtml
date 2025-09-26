@@ -1,12 +1,11 @@
-﻿@model CreateDepartmentDto
+﻿@model Department;
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Create Department</h1>
-<br/>
-<br />
-<form asp-action="Create" >
+<h1>Edit Deprtment</h1>
+
+<form asp-action="Edit">
 
     <div class="my-3">
         <label asp-for="Code" class="col-form-label"></label>
@@ -25,10 +24,10 @@
         <span asp-validation-for="CreateAt" class="text-danger"></span>
 
     </div>
-    
+
     <div class="my-5">
-        <input type="submit" value="Submit" class="btn btn-primary"/>
+        <input type="submit" value="Save" class="btn btn-warning" />
         <a asp-action="Index" class=" mx-3 btn btn-light">Back To List</a>
     </div>
-   
+
 </form>
