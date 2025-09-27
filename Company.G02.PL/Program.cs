@@ -15,11 +15,16 @@ namespace Company.G02.PL
             builder.Services.AddControllersWithViews();//Register Build-In Mvc Servises
 
             builder.Services.AddScoped<IDepartmentRepository , DepartmentRepository>(); //Register DI (Dependency Injection) for DepartmentRepository
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); //Register DI (Dependency Injection) for DepartmentRepository
+
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             }); //Register DI (Dependency Injection) for CompanyDbContext
             var app = builder.Build();
+
+
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
