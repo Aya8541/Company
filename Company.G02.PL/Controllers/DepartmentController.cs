@@ -20,6 +20,7 @@ namespace Company.G02.PL.Controllers
         [HttpGet] //Get: /Department/Index
         public IActionResult Index()
         {
+            //DepartmentRepository _departmentRepository = new DepartmentRepository();
             var departments = _departmentRepository.GetAll();
 
             return View(departments);
