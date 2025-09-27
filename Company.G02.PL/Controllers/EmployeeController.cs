@@ -77,22 +77,55 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
+            var employee = _employeeRepository.Get(id.Value);
 
-            return Details(id, "Edit");
+            if (employee is null)
+            {
+                return NotFound(new { statusCode = 404, message = $"Employee with Id : {id} is not Found" }); //404
+            }
+            var employeeDto = new CreateEmployeeDto()
+            {
+                Name = employee.Name,
+                Address = employee.Address,
+                Age = employee.Age,
+                CreateAt = employee.CreateAt,
+                HiringDate = employee.HiringDate,
+                Email = employee.Email,
+                IsActive = employee.IsActive,
+                IsDeleted = employee.IsDeleted,
+                Phone = employee.Phone,
+                Salary = employee.Salary,
+            };
+            return View(employeeDto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, Employee model)
+        public IActionResult Edit([FromRoute] int id, CreateEmployeeDto model)
         {
 
             if (ModelState.IsValid) //Server side validation
             {
-                if (id != model.Id)
+                //if (id != model.Id)
+                //{
+                //    return BadRequest();
+                //}
+                var employee = new Employee()
                 {
-                    return BadRequest();
-                }
-                var count = _employeeRepository.Update(model);
+                    Id = id,
+                    Name = model.Name,
+                    Address = model.Address,
+                    Age = model.Age,
+                    CreateAt = model.CreateAt,
+                    HiringDate = model.HiringDate,
+                    Email = model.Email,
+                    IsActive = model.IsActive,
+                    IsDeleted = model.IsDeleted,
+                    Phone = model.Phone,
+                    Salary = model.Salary,
+                };
+
+                var count = _employeeRepository.Update(employee);
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
