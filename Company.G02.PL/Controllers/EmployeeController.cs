@@ -9,23 +9,35 @@ namespace Company.G02.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
-
+        private readonly IDepartmentRepository _departmentRepository;
         //ASK CLR Create Object of EmployeeRepository
-        public EmployeeController(IEmployeeRepository EmployeeRepository)
+        public EmployeeController(IEmployeeRepository EmployeeRepository ,IDepartmentRepository departmentRepository)
         {
             _employeeRepository = EmployeeRepository;
+            _departmentRepository = departmentRepository;
+
         }
         [HttpGet] //Get: /Employee/Index
         public IActionResult Index()
         {
             var employees = _employeeRepository.GetAll();
+            //Dictionary : 3 Property ways to pass Extra data from controller(Action) to view
+            //1.ViewData : pass Extra data from controller(Action) to view
+            //ViewData["Message"] = "Hello from ViewData";
 
+
+            ////2.ViewBag  : pass Extra data from controller(Action) to view
+            // ViewBag.Message = "Hello from ViewBag"; 
+
+            //3.TempData
             return View(employees);
         }
 
         [HttpGet] //Get: /Employee/Create
         public IActionResult Create()
         {
+            var departments=_departmentRepository.GetAll();
+            ViewData["departments"] = departments;
             return View();
         }
 
@@ -46,11 +58,13 @@ namespace Company.G02.PL.Controllers
                     IsDeleted = model.IsDeleted,
                     Phone = model.Phone,    
                     Salary = model.Salary,
+                    DepartmentId = model.DepartmentId,//....
                 };
 
                 var count = _employeeRepository.Add(employee);
                 if (count > 0)
                 {
+                    TempData["Message"] = "Employee is Created !! ";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -77,6 +91,8 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
+            var departments = _departmentRepository.GetAll();
+            ViewData["departments"] = departments;
             var employee = _employeeRepository.Get(id.Value);
 
             if (employee is null)
@@ -95,6 +111,8 @@ namespace Company.G02.PL.Controllers
                 IsDeleted = employee.IsDeleted,
                 Phone = employee.Phone,
                 Salary = employee.Salary,
+                DepartmentId = employee.DepartmentId,//....
+
             };
             return View(employeeDto);
         }
@@ -123,6 +141,8 @@ namespace Company.G02.PL.Controllers
                     IsDeleted = model.IsDeleted,
                     Phone = model.Phone,
                     Salary = model.Salary,
+                    DepartmentId = model.DepartmentId,//....
+
                 };
 
                 var count = _employeeRepository.Update(employee);
