@@ -3,6 +3,7 @@ using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Company.G02.PL.Controllers
 {
@@ -18,9 +19,19 @@ namespace Company.G02.PL.Controllers
 
         }
         [HttpGet] //Get: /Employee/Index
-        public IActionResult Index()
+        public IActionResult Index(string? SearchInput)
         {
-            var employees = _employeeRepository.GetAll();
+            IEnumerable<Employee> employees;
+            
+            if (string.IsNullOrEmpty(SearchInput))
+            {
+                  employees = _employeeRepository.GetAll();
+            }
+            else
+            {
+                  employees = _employeeRepository.GitByName(SearchInput);
+
+            }
             //Dictionary : 3 Property ways to pass Extra data from controller(Action) to view
             //1.ViewData : pass Extra data from controller(Action) to view
             //ViewData["Message"] = "Hello from ViewData";
