@@ -2,3 +2,17 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+let InputSearch = document.getElementById("InputSearch");
+if (InputSearch) {
+    InputSearch.addEventListener("input", function () {
+        let xhr = new XMLHttpRequest();
+        let url = "https://localhost:44396/Employee" + InputSearch.value;
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+            }
+        }
+        xhr.send();
+    });
+}
