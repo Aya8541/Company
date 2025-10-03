@@ -11,14 +11,19 @@ namespace Company.G02.PL.Controllers
     // MVC Controller
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _departmentRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
 
 
         //ASK CLR Create Object of DepartmentRepository
-        public DepartmentController(IDepartmentRepository departmentRepository,IMapper mapper)
+        public DepartmentController( IUnitOfWork unitOfWork
+            //IDepartmentRepository departmentRepository
+            , IMapper mapper)
         {
-            _departmentRepository = departmentRepository;
+            //_departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
 
         }
@@ -26,7 +31,7 @@ namespace Company.G02.PL.Controllers
         public IActionResult Index()
         {
             //DepartmentRepository _departmentRepository = new DepartmentRepository();
-            var departments = _departmentRepository.GetAll();
+            var departments = _unitOfWork.DepartmentRepository.GetAll();
 
             return View(departments);
         }
@@ -48,7 +53,9 @@ namespace Company.G02.PL.Controllers
                     CreateAt = model.CreateAt,
                 };
 
-              var count =  _departmentRepository.Add(department);
+              _unitOfWork.DepartmentRepository.Add(department);
+                var count = _unitOfWork.Complete();
+
                 if (count > 0 )
                 {
                     return RedirectToAction(nameof(Index));
@@ -65,7 +72,7 @@ namespace Company.G02.PL.Controllers
             {
                 return BadRequest("Invalid Id"); //400
             }
-            var department = _departmentRepository.Get(id.Value);
+            var department = _unitOfWork.DepartmentRepository.Get(id.Value);
 
             if (department is null)
             {
@@ -161,10 +168,12 @@ namespace Company.G02.PL.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            var department = _departmentRepository.Get(id); // Get method in repo
+            var department = _unitOfWork.DepartmentRepository.Get(id); // Get method in repo
             if (department == null) return NotFound();
 
-            var count = _departmentRepository.Delete(department);
+           _unitOfWork.DepartmentRepository.Delete(department);
+            var count = _unitOfWork.Complete();
+
             if (count > 0)
                 return RedirectToAction(nameof(Index));
 
@@ -180,7 +189,7 @@ namespace Company.G02.PL.Controllers
             if (id == null)
                 return BadRequest("Invalid Id");
 
-            var department = _departmentRepository.Get(id.Value);
+            var department = _unitOfWork.DepartmentRepository.Get(id.Value);
             if (department == null)
                 return NotFound();
 
@@ -195,12 +204,13 @@ namespace Company.G02.PL.Controllers
             if (ModelState.IsValid)
             {
 
-                var existingDept = _departmentRepository.Get(id);
+                var existingDept = _unitOfWork.DepartmentRepository.Get(id);
                 if (existingDept == null)
                     return NotFound();
 
                 _mapper.Map(model, existingDept); // Copy values from DTO to existing entity
-                var count = _departmentRepository.Update(existingDept);
+              _unitOfWork.DepartmentRepository.Update(existingDept);
+                var count = _unitOfWork.Complete();
 
                 if (count > 0)
                 {
