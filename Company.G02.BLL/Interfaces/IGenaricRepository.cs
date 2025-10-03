@@ -1,4 +1,5 @@
 ﻿using Company.G02.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace Company.G02.BLL.Interfaces
         int Add(T model);
         int Update(T model);
         int Delete(T model);
+       
+
     }
 }

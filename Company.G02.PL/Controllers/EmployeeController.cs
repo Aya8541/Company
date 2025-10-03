@@ -1,4 +1,5 @@
-﻿using Company.G02.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
@@ -10,12 +11,16 @@ namespace Company.G02.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
+        private readonly IMapper _mapper;
         //ASK CLR Create Object of EmployeeRepository
-        public EmployeeController(IEmployeeRepository EmployeeRepository ,IDepartmentRepository departmentRepository)
+        public EmployeeController(IEmployeeRepository EmployeeRepository
+                                  //,IDepartmentRepository departmentRepository
+                                  ,IMapper mapper)
         {
             _employeeRepository = EmployeeRepository;
-            _departmentRepository = departmentRepository;
+            //_departmentRepository = departmentRepository;
+            _mapper = mapper;
 
         }
         [HttpGet] //Get: /Employee/Index
@@ -47,8 +52,8 @@ namespace Company.G02.PL.Controllers
         [HttpGet] //Get: /Employee/Create
         public IActionResult Create()
         {
-            var departments=_departmentRepository.GetAll();
-            ViewData["departments"] = departments;
+            //var departments=_departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
             return View();
         }
 
@@ -57,21 +62,22 @@ namespace Company.G02.PL.Controllers
         {
             if (ModelState.IsValid) //Server side validation
             {
-                var employee = new Employee()
-                {
-                    Name = model.Name,
-                    Address = model.Address,
-                    Age = model.Age,
-                    CreateAt = model.CreateAt,
-                    HiringDate = model.HiringDate,
-                    Email = model.Email,
-                    IsActive = model.IsActive,
-                    IsDeleted = model.IsDeleted,
-                    Phone = model.Phone,    
-                    Salary = model.Salary,
-                    DepartmentId = model.DepartmentId,//....
-                };
-
+                //Manual Mapping
+                //var employee = new Employee()
+                //{
+                //    Name = model.Name,
+                //    Address = model.Address,
+                //    Age = model.Age,
+                //    CreateAt = model.CreateAt,
+                //    HiringDate = model.HiringDate,
+                //    Email = model.Email,
+                //    IsActive = model.IsActive,
+                //    IsDeleted = model.IsDeleted,
+                //    Phone = model.Phone,    
+                //    Salary = model.Salary,
+                //    DepartmentId = model.DepartmentId,//....
+                //};
+               var employee =_mapper.Map<Employee>(model);
                 var count = _employeeRepository.Add(employee);
                 if (count > 0)
                 {
@@ -102,29 +108,31 @@ namespace Company.G02.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            var departments = _departmentRepository.GetAll();
-            ViewData["departments"] = departments;
+            //var departments = _departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
             var employee = _employeeRepository.Get(id.Value);
 
             if (employee is null)
             {
                 return NotFound(new { statusCode = 404, message = $"Employee with Id : {id} is not Found" }); //404
             }
-            var employeeDto = new CreateEmployeeDto()
-            {
-                Name = employee.Name,
-                Address = employee.Address,
-                Age = employee.Age,
-                CreateAt = employee.CreateAt,
-                HiringDate = employee.HiringDate,
-                Email = employee.Email,
-                IsActive = employee.IsActive,
-                IsDeleted = employee.IsDeleted,
-                Phone = employee.Phone,
-                Salary = employee.Salary,
-                DepartmentId = employee.DepartmentId,//....
+            //var employeeDto = new CreateEmployeeDto()
+            //{
+            //    Name = employee.Name,
+            //    Address = employee.Address,
+            //    Age = employee.Age,
+            //    CreateAt = employee.CreateAt,
+            //    HiringDate = employee.HiringDate,
+            //    Email = employee.Email,
+            //    IsActive = employee.IsActive,
+            //    IsDeleted = employee.IsDeleted,
+            //    Phone = employee.Phone,
+            //    Salary = employee.Salary,
+            //    DepartmentId = employee.DepartmentId,//....
 
-            };
+            //};
+            var employeeDto = _mapper.Map<CreateEmployeeDto>(employee);
+            
             return View(employeeDto);
         }
 
@@ -139,24 +147,30 @@ namespace Company.G02.PL.Controllers
                 //{
                 //    return BadRequest();
                 //}
-                var employee = new Employee()
-                {
-                    Id = id,
-                    Name = model.Name,
-                    Address = model.Address,
-                    Age = model.Age,
-                    CreateAt = model.CreateAt,
-                    HiringDate = model.HiringDate,
-                    Email = model.Email,
-                    IsActive = model.IsActive,
-                    IsDeleted = model.IsDeleted,
-                    Phone = model.Phone,
-                    Salary = model.Salary,
-                    DepartmentId = model.DepartmentId,//....
+                //var employee = new Employee()
+                //{
+                //    Id = id,
+                //    Name = model.EmpName,
+                //    Address = model.Address,
+                //    Age = model.Age,
+                //    CreateAt = model.CreateAt,
+                //    HiringDate = model.HiringDate,
+                //    Email = model.Email,
+                //    IsActive = model.IsActive,
+                //    IsDeleted = model.IsDeleted,
+                //    Phone = model.Phone,
+                //    Salary = model.Salary,
+                //    DepartmentId = model.DepartmentId,//....
 
-                };
+                //};
 
-                var count = _employeeRepository.Update(employee);
+                var existingEmp = _employeeRepository.Get(id);
+                if (existingEmp == null)
+                    return NotFound();
+
+                _mapper.Map(model, existingEmp); // Copy values from DTO to existing entity
+
+                var count = _employeeRepository.Update(existingEmp);
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -171,24 +185,39 @@ namespace Company.G02.PL.Controllers
             return Details(id, "Delete");
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult Delete([FromRoute] int id, Employee model)
+        //{
+
+        //    if (ModelState.IsValid) //Server side validation
+        //    {
+        //        if (id != model.Id)
+        //        {
+        //            return BadRequest();
+        //        }
+        //        var count = _employeeRepository.Delete(model);
+        //        if (count > 0)
+        //        {
+        //            return RedirectToAction(nameof(Index));
+        //        }
+        //    }
+        //    return View(model);
+        //}
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int id, Employee model)
+        public IActionResult Delete(int id)
         {
+            var employee = _employeeRepository.Get(id); // Get method in repo
+            if (employee == null) return NotFound();
 
-            if (ModelState.IsValid) //Server side validation
-            {
-                if (id != model.Id)
-                {
-                    return BadRequest();
-                }
-                var count = _employeeRepository.Delete(model);
-                if (count > 0)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            return View(model);
+            var count = _employeeRepository.Delete(employee);
+            if (count > 0)
+                return RedirectToAction(nameof(Index));
+
+            return View(employee); // لو Delete فشل
         }
 
     }

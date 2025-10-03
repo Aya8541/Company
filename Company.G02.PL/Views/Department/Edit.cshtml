@@ -1,11 +1,12 @@
-﻿@model Department;
+﻿@model CreateDepartmentDto;
 @{
     ViewData["Title"] = "Edit";
 }
 
 <h1>Edit Deprtment</h1>
 
-<form asp-action="Edit">
+<form asp-action="Edit" >
+
 
     <div class="my-3">
         <label asp-for="Code" class="col-form-label"></label>

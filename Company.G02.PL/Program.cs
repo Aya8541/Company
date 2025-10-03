@@ -1,7 +1,9 @@
 using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
+using Company.G02.PL.Mapping;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Company.G02.PL
 {
@@ -21,6 +23,15 @@ namespace Company.G02.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             }); //Register DI (Dependency Injection) for CompanyDbContext
+
+            builder.Services.AddAutoMapper(M => M.AddProfile(new EmployeeProfile())); //Register DI (Dependency Injection) for AutoMapper
+            builder.Services.AddAutoMapper(M => M.AddProfile(new DepartmentProfile())); //Register DI (Dependency Injection) for AutoMapper
+
+            //Life Time
+            //builder.Services.AddScoped(); //Create Object Life Time per Request - Unreachable object after Request 
+            //builder.Services.AddTransient(); //Create Object Life Time per Operation   
+            //builder.Services.AddSingleton();//Create Object Life Time per Application - Object will be alive until Application is running
+
             var app = builder.Build();
 
 

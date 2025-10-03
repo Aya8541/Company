@@ -52,6 +52,9 @@ namespace Company.G02.BLL.Repositories
             _context.Set<T>().Update(model);
             return _context.SaveChanges();
         }
+
+
+
         public int Delete(T model)
         {
            
@@ -59,7 +62,7 @@ namespace Company.G02.BLL.Repositories
             return _context.SaveChanges();
         }
 
-
+      
 
     }
 }
