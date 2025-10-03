@@ -10,15 +10,19 @@ namespace Company.G02.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private readonly IEmployeeRepository _employeeRepository;
         //private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
         //ASK CLR Create Object of EmployeeRepository
-        public EmployeeController(IEmployeeRepository EmployeeRepository
+        public EmployeeController(  IUnitOfWork unitOfWork
+                                  //IEmployeeRepository EmployeeRepository
                                   //,IDepartmentRepository departmentRepository
-                                  ,IMapper mapper)
+                                  , IMapper mapper)
         {
-            _employeeRepository = EmployeeRepository;
+            _unitOfWork = unitOfWork;
+            //_employeeRepository = EmployeeRepository;
             //_departmentRepository = departmentRepository;
             _mapper = mapper;
 
@@ -30,11 +34,11 @@ namespace Company.G02.PL.Controllers
             
             if (string.IsNullOrEmpty(SearchInput))
             {
-                  employees = _employeeRepository.GetAll();
+                  employees = _unitOfWork.EmployeeRepository.GetAll();
             }
             else
             {
-                  employees = _employeeRepository.GitByName(SearchInput);
+                  employees = _unitOfWork.EmployeeRepository.GitByName(SearchInput);
 
             }
             //Dictionary : 3 Property ways to pass Extra data from controller(Action) to view
@@ -78,7 +82,8 @@ namespace Company.G02.PL.Controllers
                 //    DepartmentId = model.DepartmentId,//....
                 //};
                var employee =_mapper.Map<Employee>(model);
-                var count = _employeeRepository.Add(employee);
+                 _unitOfWork.EmployeeRepository.Add(employee);
+                var count = _unitOfWork.Complete();
                 if (count > 0)
                 {
                     TempData["Message"] = "Employee is Created !! ";
@@ -96,7 +101,7 @@ namespace Company.G02.PL.Controllers
             {
                 return BadRequest("Invalid Id"); //400
             }
-            var employee = _employeeRepository.Get(id.Value);
+            var employee = _unitOfWork.EmployeeRepository.Get(id.Value);
 
             if (employee is null)
             {
@@ -110,7 +115,7 @@ namespace Company.G02.PL.Controllers
         {
             //var departments = _departmentRepository.GetAll();
             //ViewData["departments"] = departments;
-            var employee = _employeeRepository.Get(id.Value);
+            var employee = _unitOfWork.EmployeeRepository.Get(id.Value);
 
             if (employee is null)
             {
@@ -164,13 +169,15 @@ namespace Company.G02.PL.Controllers
 
                 //};
 
-                var existingEmp = _employeeRepository.Get(id);
+                var existingEmp = _unitOfWork.EmployeeRepository.Get(id);
                 if (existingEmp == null)
                     return NotFound();
 
                 _mapper.Map(model, existingEmp); // Copy values from DTO to existing entity
 
-                var count = _employeeRepository.Update(existingEmp);
+                _unitOfWork.EmployeeRepository.Update(existingEmp);
+                var count = _unitOfWork.Complete();
+
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -210,10 +217,12 @@ namespace Company.G02.PL.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            var employee = _employeeRepository.Get(id); // Get method in repo
+            var employee = _unitOfWork.EmployeeRepository.Get(id); // Get method in repo
             if (employee == null) return NotFound();
 
-            var count = _employeeRepository.Delete(employee);
+            _unitOfWork.EmployeeRepository.Delete(employee);
+            var count = _unitOfWork.Complete();
+
             if (count > 0)
                 return RedirectToAction(nameof(Index));
 

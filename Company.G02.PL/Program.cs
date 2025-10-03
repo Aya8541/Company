@@ -1,3 +1,4 @@
+using Company.G02.BLL;
 using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
@@ -18,7 +19,9 @@ namespace Company.G02.PL
 
             builder.Services.AddScoped<IDepartmentRepository , DepartmentRepository>(); //Register DI (Dependency Injection) for DepartmentRepository
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); //Register DI (Dependency Injection) for DepartmentRepository
-
+            
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); //Register DI (Dependency Injection) for UnitOfWork
+            
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
