@@ -47,3 +47,10 @@
     <label asp-for="Department" class="col-form-label"></label>
     <input asp-for="Department.Name" class="form-control" readonly />
 </div>
+<div class="my-3 " style="width = 200px">
+    <label asp-for="ImageName"  class="col-form-label"></label>
+    <div>
+        <img src="~/files/images/@Model.ImageName" alt="Employee Image" class="img-fluid rounded-circle " />
+    </div>
+
+</div>

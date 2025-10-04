@@ -3,6 +3,7 @@ using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
+using Company.G02.PL.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -81,7 +82,12 @@ namespace Company.G02.PL.Controllers
                 //    Salary = model.Salary,
                 //    DepartmentId = model.DepartmentId,//....
                 //};
-               var employee =_mapper.Map<Employee>(model);
+                if(model.Image is not null)
+                {
+                  model.ImageName = DocumentSettings.UploadFile(model.Image, "images");
+                }
+
+                var employee =_mapper.Map<Employee>(model);
                  _unitOfWork.EmployeeRepository.Add(employee);
                 var count = _unitOfWork.Complete();
                 if (count > 0)
@@ -172,12 +178,19 @@ namespace Company.G02.PL.Controllers
                 var existingEmp = _unitOfWork.EmployeeRepository.Get(id);
                 if (existingEmp == null)
                     return NotFound();
-
+                if (model.ImageName is not null && model.Image is not null)
+                {
+                    DocumentSettings.DeleteFile(model.ImageName, "images");
+                }
+                if (model.Image is not null)
+                {
+                    model.ImageName = DocumentSettings.UploadFile(model.Image, "images");
+                }
                 _mapper.Map(model, existingEmp); // Copy values from DTO to existing entity
 
                 _unitOfWork.EmployeeRepository.Update(existingEmp);
                 var count = _unitOfWork.Complete();
-
+                
                 if (count > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -224,7 +237,14 @@ namespace Company.G02.PL.Controllers
             var count = _unitOfWork.Complete();
 
             if (count > 0)
+            {
+                if (employee.ImageName is not null)
+                {
+                    DocumentSettings.DeleteFile(employee.ImageName, "images");
+                }
                 return RedirectToAction(nameof(Index));
+
+            }
 
             return View(employee); // لو Delete فشل
         }

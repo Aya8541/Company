@@ -21,5 +21,7 @@ namespace Company.G02.DAL.Models
 
         public int? DepartmentId { get; set; }//FK
         public Department? Department { get; set; }
+
+        public string? ImageName { get; set; }
     }
 }
