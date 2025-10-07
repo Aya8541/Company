@@ -33,6 +33,14 @@ namespace Company.G02.PL
             builder.Services.AddAutoMapper(M => M.AddProfile(new DepartmentProfile())); //Register DI (Dependency Injection) for AutoMapper
             builder.Services.AddIdentity<AppUser, IdentityRole>()
                             .AddEntityFrameworkStores<CompanyDbContext>();
+
+            builder.Services.ConfigureApplicationCookie( config =>
+            {
+                config.LoginPath = "/Account/SignIn";
+                config.LogoutPath = "/Account/SignOut";
+                config.AccessDeniedPath = "/Account/AccessDenied";
+                config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            });
             //Life Time
             //builder.Services.AddScoped(); //Create Object Life Time per Request - Unreachable object after Request 
             //builder.Services.AddTransient(); //Create Object Life Time per Operation   
@@ -55,6 +63,8 @@ namespace Company.G02.PL
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

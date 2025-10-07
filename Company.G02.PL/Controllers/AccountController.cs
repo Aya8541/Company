@@ -10,10 +10,12 @@ namespace Company.G02.PL.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController( UserManager<AppUser> userManager )
+        public AccountController( UserManager<AppUser> userManager , SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
         #region SignUp
         [HttpGet]
@@ -79,8 +81,13 @@ namespace Company.G02.PL.Controllers
                   var flag = await _userManager.CheckPasswordAsync(user, model.Password);
                     if (flag)
                     {
+                      var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe , false);
                         //SignIn
-                        return RedirectToAction("Index", "Home");
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction("Index", "Home");
+
+                        }
                     }
                 }
                 ModelState.AddModelError("", "Invalid Login !!");

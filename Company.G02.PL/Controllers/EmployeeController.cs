@@ -4,12 +4,15 @@ using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Models;
 using Company.G02.PL.Dtos;
 using Company.G02.PL.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.Tasks;
 
 namespace Company.G02.PL.Controllers
 {
+    [Authorize]
+
     public class EmployeeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
