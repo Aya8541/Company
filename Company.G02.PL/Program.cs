@@ -32,7 +32,8 @@ namespace Company.G02.PL
             builder.Services.AddAutoMapper(M => M.AddProfile(new EmployeeProfile())); //Register DI (Dependency Injection) for AutoMapper
             builder.Services.AddAutoMapper(M => M.AddProfile(new DepartmentProfile())); //Register DI (Dependency Injection) for AutoMapper
             builder.Services.AddIdentity<AppUser, IdentityRole>()
-                            .AddEntityFrameworkStores<CompanyDbContext>();
+                            .AddEntityFrameworkStores<CompanyDbContext>()
+                            .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie( config =>
             {
