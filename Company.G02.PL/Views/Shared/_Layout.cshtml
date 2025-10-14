@@ -24,12 +24,29 @@
                         <li class="nav-item"><a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
                         <li class="nav-item"><a class="nav-link text-dark" asp-controller="Department" asp-action="Index">Department</a></li>
                         <li class="nav-item"><a class="nav-link text-dark" asp-controller="Employee" asp-action="Index">Employee</a></li>
+
                     </ul>
 
-                    <form asp-controller="Account" asp-action="SignOut" method="post" class="d-flex align-items-center ms-auto">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-outline-danger ms-3 px-3">Sign Out</button>
-                    </form>
+       
+                  
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link text-dark" asp-controller="User" asp-action="Index">Users</a></li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> @User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <form asp-controller="Account" asp-action="SignOut" method="post" class="px-3">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger w-100">Sign Out</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
                 </div>
             </div>
         </nav>
