@@ -1,0 +1,47 @@
+﻿@model UserToReturnDto;
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Employee</h1>
+
+<form asp-action="Edit" enctype="multipart/form-data">
+
+
+    <div class="my-3">
+        <label asp-for="UserName" class="col-form-label"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+
+    </div>
+    <div class="my-3">
+        <label asp-for="FirstName" class="col-form-label"></label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+
+    </div>
+    <div class="my-3">
+        <label asp-for="LastName" class="col-form-label"></label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+
+    </div>
+    <div class="my-3">
+        <label asp-for="Email" class="col-form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+
+
+    </div>
+    <div class="my-5">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Index" class=" mx-3 btn btn-light">Back To List</a>
+    </div>
+
+</form>
+
+@section ValidationsSection {
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
