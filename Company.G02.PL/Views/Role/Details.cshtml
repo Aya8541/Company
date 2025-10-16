@@ -1,0 +1,21 @@
+﻿@model RoleToReturnDto
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details Page</h1>
+<br />
+<br />
+<div>
+
+
+
+    <partial name="RolePartialView/_DeleteDetailsPartialView" />
+
+    <div class="my-5">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class=" btn btn-warning">Edit</a>
+        <a asp-action="Index" class=" mx-3 btn btn-light">Back To List</a>
+    </div>
+
+</div>
+
