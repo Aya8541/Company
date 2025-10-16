@@ -4,16 +4,20 @@ using Company.G02.PL.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Company.G02.PL.Controllers
 {
     public class RoleController : Controller
     {
          private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public RoleController(RoleManager<IdentityRole> roleManager)
+        public RoleController(RoleManager<IdentityRole> roleManager ,UserManager<AppUser> userManager)
         {
             _roleManager = roleManager;
+            _userManager = userManager;
         }
         [HttpGet]
         public async Task<IActionResult> Index(string? SearchInput)
@@ -148,6 +152,64 @@ namespace Company.G02.PL.Controllers
                 ModelState.AddModelError("", "Invalid Operation !!");
             }
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddOrRemoveUser(string roleId)
+        {
+           var role = await _roleManager.FindByIdAsync(roleId);
+            if (role is null) return NotFound();
+            ViewData["RoleId"]= role.Id;
+            var usersInRole = new List<UsersInRoleDto>();
+            var users =await _userManager.Users.ToListAsync();
+            foreach (var user in users)
+            {
+                var userInRole = new UsersInRoleDto()
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                };
+                if (await _userManager.IsInRoleAsync(user, role.Name)) 
+                {
+                    userInRole.IsSelected = true;
+                }
+                else 
+                {
+                    userInRole.IsSelected = false;
+                }
+
+                usersInRole.Add(userInRole);
+            }
+            return View(usersInRole);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrRemoveUser(string roleId , List<UsersInRoleDto> users)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId);
+            if (role is null) return NotFound();
+            if (ModelState.IsValid)
+            {
+                foreach (var user in users)
+                {
+                    var appUser = await _userManager.FindByIdAsync(user.UserId);
+                    if (user is not null)
+                    {
+                        if (user.IsSelected && !await _userManager.IsInRoleAsync(appUser, role.Name))
+                        {
+                            await _userManager.AddToRoleAsync(appUser, role.Name);
+                        }
+                        else if (!user.IsSelected && await _userManager.IsInRoleAsync(appUser, role.Name))
+                        {
+                            await _userManager.RemoveFromRoleAsync(appUser, role.Name);
+                        }
+                    }
+
+                }
+                return RedirectToAction(nameof(Edit),new {id = role.Id });
+            }
+
+            return View(users);
         }
     }
 }
