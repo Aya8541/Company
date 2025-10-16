@@ -18,5 +18,10 @@
         <input asp-for="Email" class="form-control" readonly />
 
     </div>
+<div class="my-3">
+    <label asp-for="Roles" class="col-form-label"></label>
+    <input value="@string.Join(", ", Model.Roles)" class="form-control" readonly />
+
+</div>
 
 
