@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Company.G02.DAL": {
+      "commandName": "Project"
+    },
+    "IIs Express": {
+      "commandName": "Executable"
+    }
+  }
+}
