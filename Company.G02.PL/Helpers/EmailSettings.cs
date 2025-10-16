@@ -3,7 +3,7 @@ using System.Net.Mail;
 
 namespace Company.G02.PL.Helpers
 {
-    public static class EmailSettings
+    public static class EmailSettings ///طريقة امين 
     {
         public static bool SendEmail(Email email)
         {
