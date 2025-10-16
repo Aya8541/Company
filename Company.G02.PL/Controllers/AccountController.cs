@@ -102,7 +102,7 @@ namespace Company.G02.PL.Controllers
         #region SignOut
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignOut()
+        public new async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync(); // بيحذف الكوكيز الخاصة بتسجيل الدخول
             return RedirectToAction("SignIn", "Account"); // بيرجع المستخدم لصفحة تسجيل الدخول
