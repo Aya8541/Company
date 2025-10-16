@@ -13,11 +13,14 @@ namespace Company.G02.PL.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IMailService _mailService;     
 
-        public AccountController( UserManager<AppUser> userManager , SignInManager<AppUser> signInManager)
+
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mailService = mailService;
         }
         #region SignUp
         [HttpGet]
@@ -136,15 +139,17 @@ namespace Company.G02.PL.Controllers
                         Subject = "Reset Password",
                         Body = url
                     };
-                    //send email to reset password  
-                    var flag = EmailSettings.SendEmail(email);
-                    if (flag)
-                    {
+                    ////send email to reset password  
+                    //var flag = EmailSettings.SendEmail(email);
+                    //if (flag)
+                    //{
 
-                        // Check your inbox
-                        return RedirectToAction("CheckYourInbox");
+                    //    // Check your inbox
+                    //    return RedirectToAction("CheckYourInbox");
 
-                    }
+                    //}
+                    _mailService.SendEmail(email);
+                    return RedirectToAction("CheckYourInbox");
                 }
             }
             ModelState.AddModelError("", "Invalid Email !!");

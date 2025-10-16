@@ -3,7 +3,9 @@ using Company.G02.BLL.Interfaces;
 using Company.G02.BLL.Repositories;
 using Company.G02.DAL.Data.Contexts;
 using Company.G02.DAL.Models;
+using Company.G02.PL.Helpers;
 using Company.G02.PL.Mapping;
+using Company.G02.PL.Setting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +44,8 @@ namespace Company.G02.PL
                 config.AccessDeniedPath = "/Account/AccessDenied";
                 config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
             });
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
+            builder.Services.AddScoped<IMailService, MailService>();
             //Life Time
             //builder.Services.AddScoped(); //Create Object Life Time per Request - Unreachable object after Request 
             //builder.Services.AddTransient(); //Create Object Life Time per Operation   
