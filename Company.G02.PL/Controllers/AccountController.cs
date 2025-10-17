@@ -204,5 +204,11 @@ namespace Company.G02.PL.Controllers
         }
         #endregion
 
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

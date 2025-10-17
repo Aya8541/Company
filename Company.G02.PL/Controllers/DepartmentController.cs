@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Company.G02.PL.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin")]
 
     // MVC Controller
     public class DepartmentController : Controller
@@ -170,6 +170,8 @@ namespace Company.G02.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var department =await _unitOfWork.DepartmentRepository.GetAsync(id); // Get method in repo

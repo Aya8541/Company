@@ -43,6 +43,7 @@ namespace Company.G02.PL
                 config.LogoutPath = "/Account/SignOut";
                 config.AccessDeniedPath = "/Account/AccessDenied";
                 config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                //config.AccessDeniedPath = "/Account/AccessDenied";
             });
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
             builder.Services.AddScoped<IMailService, MailService>();
