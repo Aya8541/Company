@@ -46,7 +46,7 @@ namespace Company.G02.PL
             });
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
             builder.Services.AddScoped<IMailService, MailService>();
-            //Life Time
+            //Life Time .
             //builder.Services.AddScoped(); //Create Object Life Time per Request - Unreachable object after Request 
             //builder.Services.AddTransient(); //Create Object Life Time per Operation   
             //builder.Services.AddSingleton();//Create Object Life Time per Application - Object will be alive until Application is running
