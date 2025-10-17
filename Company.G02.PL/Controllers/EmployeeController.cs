@@ -57,6 +57,15 @@ namespace Company.G02.PL.Controllers
             //3.TempData
             return View(employees);
         }
+        [HttpGet] 
+        public async Task<IActionResult> Search(string? SearchInput)
+        {
+            IEnumerable<Employee> employees;
+
+            employees = await _unitOfWork.EmployeeRepository.GetByNameAsync(SearchInput);
+
+            return PartialView ("EmployeePartialView/EmployeesTablePartialView", employees);
+        }
 
         [HttpGet] //Get: /Employee/Create
         public IActionResult Create()

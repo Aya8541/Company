@@ -46,7 +46,25 @@ namespace Company.G02.PL.Controllers
      
             return View(users);
         }
+        [HttpGet]
+        public async Task<IActionResult> Search(string? SearchInput)
+        {
+            IEnumerable<UserToReturnDto> users;
 
+            
+                users = _userManager.Users.Select(U => new UserToReturnDto()
+                {
+                    Id = U.Id,
+                    UserName = U.UserName,
+                    FirstName = U.FirstName,
+                    LastName = U.LastName,
+                    Email = U.Email,
+                    Roles = _userManager.GetRolesAsync(U).Result
+                }).Where(U => U.FirstName.ToLower().Contains(SearchInput.ToLower()));
+
+
+            return PartialView("UserPartialView/UserTablePartialView", users);
+        }
         [HttpGet]
         public async Task<IActionResult> Details(string? id, string viewName = "Details")
         {
